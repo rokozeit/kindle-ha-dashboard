@@ -1,11 +1,11 @@
 {
   "cards": [
     {
-      "name": "Wohnzimmer",
+      "name": "Living Room",
       "entities": [
         {
-          "entity_id": "light.osram_licht",
-          "name": "Wohnzimmer Licht",
+          "entity_id": "light.osram_light",
+          "name": "Small Light",
           "type": "light"
         },
         {
@@ -16,18 +16,18 @@
         },
         {
           "entity_id": "sensor.sonoff_snzb_02d_luftfeuchtigkeit",
-          "name": "Luftfeuchtigkeit",
+          "name": "Humidity",
           "type": "sensor",
           "icon": "fa-tint"
         }
       ]
     },
     {
-      "name": "Flur",
+      "name": "Kitchen",
       "entities": [
         {
-          "entity_id": "light.osram_licht",
-          "name": "Wohnzimmer Licht",
+          "entity_id": "light.osram_light_kitchen",
+          "name": "Kitchen Light",
           "type": "light"
         },
         {

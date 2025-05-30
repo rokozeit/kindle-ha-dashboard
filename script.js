@@ -83,7 +83,7 @@ function createCardGroup(cardConfig) {
             lightOrSwitchContainer.className = 'sensor-row';
 
             var icon = document.createElement('i');
-            icon.className = 'fa ' + (entity.type === 'light' ? 'fa-lightbulb-o' : 'fa-plug');
+            icon.className = entity.icon ? entity.icon : 'fa ' + (entity.type === 'light' ? 'fa-lightbulb-o' : 'fa-plug');
             icon.classList.add('icon');
 
             lightOrSwitchContainer.appendChild(icon);
