@@ -4,7 +4,7 @@ Transform your **Kindle Paperwhite (7th Gen)** into a low-power, always-on **sma
 
 > This project is designed for older Kindle devices running firmware **below 5.16.4** with the crappy browser.
 
----
+
 
 ## Motivation
 
@@ -12,7 +12,7 @@ The browser on older Kindles is extremely limited and cannot render full-feature
 
 Most similar projects only display **static screenshots** of the dashboard. While functional, I wanted something **more interactive**, without fully rebuilding the UI from scratch everytime.
 
----
+
 
 ## About the Project
 
@@ -41,7 +41,7 @@ Simply host this project on an HTTP web server and access it from your Kindle’
 
 > ℹ For help setting up a web server, there are plenty of online tutorials. This guide assumes you already have that part covered.
 
----
+
 
 ### Option 2: Use With Jailbroken Kindle
 
@@ -56,7 +56,7 @@ To use this method:
 3. Copy the project files directly onto the Kindle’s file system.
 4. Open `index.html` in the experimental browser.
 
----
+
 
 ## Configuration
 
@@ -65,7 +65,7 @@ To get the dashboard running, you'll need to configure two files:
 - `secrets.json` — contains sensitive information like the Home Assistant URL and access token  
 - `config.json` — defines the layout and content of your dashboard
 
----
+
 
 ### Home Assistant Access: `secrets.json`
 
@@ -85,7 +85,7 @@ You must provide the URL to your Home Assistant instance and a **Long-Lived Acce
 ```
 
 ### The Dash Board Config: `config.json`
-The dashboard can display different cards. In a card different entities can be grouped. You are free on how to do so. It might mess up the layout though.
+The `config.json` file defines the **structure and content** of your dashboard. You can organize your smart home devices into logical sections (called "cards"), and each card contains one or more **entities** (lights, sensors, etc.). You are free on how to do so. However, as stated before, I am not a pro and it might mess up the layout. It is all experimental.
 
 #### Example `config.json` - snippet with card
 Each card has a `name` displayed to the user in the card header and a list of `entities`. I only tested a view. You might mess up the layout here easily.
@@ -102,16 +102,26 @@ Each card has a `name` displayed to the user in the card header and a list of `e
 ```
 
 #### Entities
-Currently the configuration supports the following entities:
+The current configuration supports the following Home Assistant entity types:
 
-- Lights (switch and brightness ajustion)
-- Switches
-- Sensors (like temperature or humidity)
+- **Lights**  
+  - Toggle on/off  
+  - Adjust brightness (if supported by the light entity)
+
+- **Switches**  
+  - Simple on/off control
+
+- **Sensors**  
+  - Read-only values such as:
+    - Temperature
+    - Humidity
+    - Any other sensor entity supported by Home Assistant
+
 
 For each entity you provide a human readable `name` (displayed in the dashboard), the `type` (`sensor`, `light` or `switch`), the home assistant `entity_id` of the device and a icon name from [font awsome](https://fontawesome.com/search?ic=free) to be displayed in front of the entity (only free once).
 
 | Key         | Description                                                |
-| ----------- | ---------------------------------------------------------  |
+| -- |   |
 | `entity_id` | The entity id of your device at home assistant                          |
 | `name`      | Display name shown to the user.                            |
 | `type`      | Type of entity, e.g., `sensor`, `light` or `switch`. |
@@ -120,6 +130,8 @@ For each entity you provide a human readable `name` (displayed in the dashboard)
 #### Putting it all together
 
 Also see `./config_sample.json`
+
+I configured two cards for living room and kitchen in the dashboard. Both include a `temperature` and a `humidity` sensor. The living room also includes a `light`.
 
 ```json
 {
@@ -150,11 +162,6 @@ Also see `./config_sample.json`
       "name": "Kitchen",
       "entities": [
         {
-          "entity_id": "light.osram_light_kitchen",
-          "name": "Kitchen Light",
-          "type": "light"
-        },
-        {
           "entity_id": "sensor.tze204_s139roas_ts0601_temperatur",
           "name": "Temperatur",
           "type": "sensor",
@@ -172,5 +179,7 @@ Also see `./config_sample.json`
 }
 ```
 
-> You should now be ready for deployment
+Feel free to use these cards as you wish. You can e.g. group similar sensors like temperature in one card and switches in another.
 
+# Final words
+> Use this project on your own risk. Do not expose secrets. Have fun.
