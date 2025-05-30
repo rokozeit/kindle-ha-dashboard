@@ -1,0 +1,48 @@
+{
+  "cards": [
+    {
+      "name": "Wohnzimmer",
+      "entities": [
+        {
+          "entity_id": "light.osram_licht",
+          "name": "Wohnzimmer Licht",
+          "type": "light"
+        },
+        {
+          "entity_id": "sensor.sonoff_snzb_02d_temperatur",
+          "name": "Temperatur",
+          "type": "sensor",
+          "icon": "fa-thermometer-half"
+        },
+        {
+          "entity_id": "sensor.sonoff_snzb_02d_luftfeuchtigkeit",
+          "name": "Luftfeuchtigkeit",
+          "type": "sensor",
+          "icon": "fa-tint"
+        }
+      ]
+    },
+    {
+      "name": "Flur",
+      "entities": [
+        {
+          "entity_id": "light.osram_licht",
+          "name": "Wohnzimmer Licht",
+          "type": "light"
+        },
+        {
+          "entity_id": "sensor.tze204_s139roas_ts0601_temperatur",
+          "name": "Temperatur",
+          "type": "sensor",
+          "icon": "fa-thermometer-half"
+        },
+        {
+          "entity_id": "sensor.tze204_s139roas_ts0601_luftfeuchtigkeit",
+          "name": "Luftfeuchtigkeit",
+          "type": "sensor",
+          "icon": "fa-tint"
+        }
+      ]
+    }
+  ]
+}
