@@ -39,6 +39,49 @@ function loadSecrets(callback) {
     xhr.send();
 }
 
+
+function createContainer(cssClasses, cssId) {
+    var container = document.createElement('div');
+    container.id = cssId;
+    container.classList.add(cssClasses);
+    return container;
+}
+
+function createIcon(cssClasses, faIcon) {
+    var icon = document.createElement('i');
+    icon.className = faIcon || 'fa fa-question';
+    icon.classList.add(cssClasses);
+    return icon;
+}
+
+function createSwitchView(ccsClass, entity) {
+    var switchContainer = createContainer('sensor-row', 'switch_' + entity.entity_id);
+}
+
+function createSeonsorView(body, entity) {
+
+    var sensorContainer = createContainer('sensor-row', 'sensor_' + entity.entity_id);
+
+    var icon = createIcon('icon', 'fa ' + (entity.icon || 'fa-tachometer'))
+
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    nameSpan.textContent = entity.name;
+
+    var valueSpan = document.createElement('span');
+    valueSpan.className = 'value';
+    valueSpan.id = 'val_' + entity.entity_id;
+    valueSpan.textContent = '-';
+
+    sensorContainer.appendChild(icon);
+    sensorContainer.appendChild(nameSpan);
+    sensorContainer.appendChild(valueSpan);
+    body.appendChild(sensorContainer);
+
+    if (!entityCards[entity.entity_id]) entityCards[entity.entity_id] = [];
+    entityCards[entity.entity_id].push({ value: valueSpan });
+}
+
 function createCardGroup(cardConfig) {
     var card = document.createElement('div');
     card.className = 'card';
@@ -55,78 +98,73 @@ function createCardGroup(cardConfig) {
 
     cardConfig.entities.forEach(function (entity) {
         if (entity.type === 'sensor') {
-            var sensorContainer = document.createElement('div');
-            sensorContainer.className = 'sensor-row';
-
-            var icon = document.createElement('i');
-            icon.className = 'fa ' + (entity.icon || 'fa-tachometer');
-            icon.classList.add('icon');
-
-            var nameSpan = document.createElement('span');
-            nameSpan.className = 'name';
-            nameSpan.textContent = entity.name;
-
-            var valueSpan = document.createElement('span');
-            valueSpan.className = 'value';
-            valueSpan.id = 'val_' + entity.entity_id;
-            valueSpan.textContent = '-';
-
-            sensorContainer.appendChild(icon);
-            sensorContainer.appendChild(nameSpan);
-            sensorContainer.appendChild(valueSpan);
-            body.appendChild(sensorContainer);
-
-            if (!entityCards[entity.entity_id]) entityCards[entity.entity_id] = [];
-            entityCards[entity.entity_id].push({ value: valueSpan });
+            createSeonsorView(body, entity);
         } else if (entity.type === 'light' || entity.type === 'switch') {
-            var lightOrSwitchContainer = document.createElement('div');
-            lightOrSwitchContainer.className = 'sensor-row';
+            // outer container for either light or switch containing icon and inner controls
+            var lightOrSwitchOuterContainer = document.createElement('div');
+            lightOrSwitchOuterContainer.className = 'light-switch-container';
 
-            var icon = document.createElement('i');
-            icon.className = entity.icon ? entity.icon : 'fa ' + (entity.type === 'light' ? 'fa-lightbulb-o' : 'fa-plug');
-            icon.classList.add('icon');
+            var icon = createIcon('icon', entity.icon ? entity.icon : 'fa ' + (entity.type === 'light' ? 'fa-lightbulb-o' : 'fa-plug'));
+            
+            lightOrSwitchOuterContainer.appendChild(icon);
 
-            lightOrSwitchContainer.appendChild(icon);
+            // container for light switch and brightness controls
+            var lightOrSwitchInnerContainer = document.createElement('div');
+            lightOrSwitchInnerContainer.className =  'inner-part';
 
+
+            var switchContainer = createSwitchView('sensor-row-inner', entity);
+
+            // container for the switch (either light or switch)
             var switchContainer = document.createElement('div');
-            switchContainer.className = 'switch-container';
+            switchContainer.className = 'sensor-row-inner';
 
-            var label = document.createElement('span');
+            var label = document.createElement('label');
             label.textContent = entity.name;
             label.className = 'name';
-        
+            label.classList.add('spacing')
+
             switchContainer.appendChild(label);
 
             var btn = document.createElement('button');
             btn.className = 'btn off';
+            btn.classList.add('value');
             btn.innerHTML = 'Laden...';
 
             if (entity.type === 'light') {
                 var brightnessControll = document.createElement('div');
-                brightnessControll.className = 'brightness-control';
+                brightnessControll.className = 'sensor-row-inner';
 
                 var lbl = document.createElement('label');
                 lbl.textContent = 'Helligkeit %: ';
                 lbl.className = 'name';
+                lbl.classList.add('spacing')
+
                 brightnessControll.appendChild(lbl);
 
-                brightnessInputControll = document.createElement('div');
-                brightnessInputControll.className = 'input';
+                var brightnessInputControll = document.createElement('div');
+                brightnessInputControll.className = 'value';
 
+                var brightnessTextInput = document.createElement('input');
+                brightnessTextInput.type = 'number';
+                brightnessTextInput.min = 0;
+                brightnessTextInput.max = 100;
+                brightnessTextInput.value = 50;
+                // brightnessTextInput.disabled = true; // Initially disabled until light is turned on
+                brightnessTextInput.className = 'brightness';
+                brightnessInputControll.appendChild(brightnessTextInput);
 
-                var brightnessInput = document.createElement('input');
-                brightnessInput.type = 'number';
-                brightnessInput.min = 0;
-                brightnessInput.max = 100;
-                brightnessInput.value = 50;
-                brightnessInputControll.appendChild(brightnessInput);
+                brightnessButtons = document.createElement('div');
+                brightnessButtons.className = 'button';
 
                 var minus = document.createElement('button');
                 minus.innerHTML = '-';
+                minus.className = 'button';
                 brightnessInputControll.appendChild(minus);
 
                 var plus = document.createElement('button');
                 plus.innerHTML = '+';
+                plus.className = 'button';
                 brightnessInputControll.appendChild(plus);
 
                 brightnessControll.appendChild(brightnessInputControll);
@@ -136,46 +174,46 @@ function createCardGroup(cardConfig) {
                 };
 
                 minus.onclick = function () {
-                    var v = Math.max(0, parseInt(brightnessInput.value, 10) - 10);
-                    brightnessInput.value = v;
+                    var v = Math.max(0, parseInt(brightnessTextInput.value, 10) - 10);
+                    brightnessTextInput.value = v;
                     setLightBrightness(entity, v);
                 };
 
                 plus.onclick = function () {
-                    var v = Math.min(100, parseInt(brightnessInput.value, 10) + 10);
-                    brightnessInput.value = v;
+                    var v = Math.min(100, parseInt(brightnessTextInput.value, 10) + 10);
+                    brightnessTextInput.value = v;
                     setLightBrightness(entity, v);
                 };
 
-                brightnessInput.onchange = function () {
-                    var v = Math.max(0, Math.min(100, parseInt(brightnessInput.value, 10)));
-                    brightnessInput.value = v;
+                brightnessTextInput.onchange = function () {
+                    var v = Math.max(0, Math.min(100, parseInt(brightnessTextInput.value, 10)));
+                    brightnessTextInput.value = v;
                     setLightBrightness(entity, v);
                 };
 
                 switchContainer.appendChild(btn);
 
-                lightOrSwitchContainer.appendChild(switchContainer);
-                lightOrSwitchContainer.appendChild(brightnessControll);
-
+                lightOrSwitchInnerContainer.appendChild(switchContainer);
+                lightOrSwitchInnerContainer.appendChild(brightnessControll);
+                lightOrSwitchOuterContainer.appendChild(lightOrSwitchInnerContainer);
 
                 if (!entityCards[entity.entity_id]) entityCards[entity.entity_id] = [];
-                entityCards[entity.entity_id].push({ button: btn, brightness: brightnessInput });
+                entityCards[entity.entity_id].push({ button: btn, brightness: brightnessTextInput });
 
             } else if (entity.type === 'switch') {
                 btn.onclick = function () {
                     var st = btn.innerHTML === 'Off' ? 'off' : 'on';
-                    toggleEntity(entity, st, btn);
+                    toggleEntity(entity, st);
                 };
 
                 switchContainer.appendChild(btn);
-                lightOrSwitchContainer.appendChild(switchContainer);
+                lightOrSwitchOuterContainer.appendChild(switchContainer);
 
                 if (!entityCards[entity.entity_id]) entityCards[entity.entity_id] = [];
                 entityCards[entity.entity_id].push({ button: btn });
             }
 
-            body.appendChild(lightOrSwitchContainer);
+            body.appendChild(lightOrSwitchOuterContainer);
         }
     });
 
@@ -183,14 +221,10 @@ function createCardGroup(cardConfig) {
     document.getElementById('container').appendChild(card);
 }
 
-function toggleEntity(entity, state, btn, brightnessPercent) {
+function toggleEntity(entity, state) {
     var domain = entity.type,
         url = secrets.url + '/api/services/' + domain + '/turn_' + state,
         data = { entity_id: entity.entity_id };
-
-    if (entity.type === 'light' && state === 'on' && typeof brightnessPercent !== 'undefined') {
-        data.brightness = Math.round((brightnessPercent / 100) * 255);
-    }
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
@@ -233,6 +267,7 @@ function loadStates() {
                 if (card.button) {
                     var st = s.state;
                     card.button.className = 'btn ' + (st === 'on' ? 'on' : 'off');
+                    card.button.classList.add('value');
                     card.button.innerHTML = st === 'on' ? 'Off' : 'On';
                 }
                 if (card.brightness) {

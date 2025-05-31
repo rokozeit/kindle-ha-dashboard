@@ -29,8 +29,6 @@ I’m not a professional developer — this was a learning project heavily assis
 
 The great news: **you can use this project without jailbreaking your Kindle**.
 
-### Option 1: Use Without Jailbreaking
-
 Simply host this project on an HTTP web server and access it from your Kindle’s **experimental browser**.
 
 - The dashboard is built using **plain HTML, CSS, and JavaScript** — no complex frameworks or dependencies.
@@ -42,29 +40,12 @@ Simply host this project on an HTTP web server and access it from your Kindle’
 > ℹ For help setting up a web server, there are plenty of online tutorials. This guide assumes you already have that part covered.
 
 
-
-### Option 2: Use With Jailbroken Kindle
-
-You may choose to **jailbreak your Kindle** and host the project directly on the device.
-
-> **Disclaimer:** Jailbreaking may violate terms of service, void warranties, or be restricted in some countries. Proceed at your own risk.
-
-To use this method:
-
-1. Jailbreak your Kindle (if you choose to).
-2. Complete the necessary [configuration steps](#config).
-3. Copy the project files directly onto the Kindle’s file system.
-4. Open `index.html` in the experimental browser.
-
-
-
 ## Configuration
 
 To get the dashboard running, you'll need to configure two files:
 
 - `secrets.json` — contains sensitive information like the Home Assistant URL and access token  
 - `config.json` — defines the layout and content of your dashboard
-
 
 
 ### Home Assistant Access: `secrets.json`
@@ -122,10 +103,10 @@ For each entity you provide a human readable `name` (displayed in the dashboard)
 
 | Key         | Description                                                |
 | -- |   |
-| `entity_id` | The entity id of your device at home assistant                          |
-| `name`      | Display name shown to the user.                            |
-| `type`      | Type of entity, e.g., `sensor`, `light` or `switch`. |
-| `icon`      | Icon name from Font Awesome (`fa-*`), e.g.: `fa-lightbulb`. For `light` and `switch` you can skip this and use my defautl.  |
+| `entity_id` | The entity id of your device at home assistant. It usually starts with e.g. `sensor`, `light` or `switch`. See examples below. You will find them within home assistant. |
+| `name`      | The display name shown to the user for this entity.  |
+| `type`      | Type of entity. Currently supported are `sensor`, `light` or `switch`. |
+| `icon`      | Icon name from [Font Awesome]https://fontawesome.com/search?ic=free (`fa-*`), e.g.: `fa-lightbulb`. You can skip this and use some defautl set icons.  |
 
 #### Putting it all together
 
@@ -179,7 +160,7 @@ I configured two cards for living room and kitchen in the dashboard. Both includ
 }
 ```
 
-Feel free to use these cards as you wish. You can e.g. group similar sensors like temperature in one card and switches in another.
+Feel free to configure these cards as you wish. You can e.g. group similar sensors like temperature in one card and switches in another. But be aware of the bad coding. You might find some features I did not intend. ;-)
 
 # Final words
 > Use this project on your own risk. Do not expose secrets. Have fun.

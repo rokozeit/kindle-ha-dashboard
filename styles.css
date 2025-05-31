@@ -33,36 +33,27 @@
 
 }
 
-.brightness-control,
-.switch-container {
+.light-switch-container {
     margin-top: 20px;
     margin-bottom: 20px;
     display: table;
     width: 100%;
-
+    padding: 4px 0;
+    border: 1px solid darkgray;
+    border-radius: 6px;
 }
 
+.light-switch-container .icon,
+.light-switch-container .inner-part {
+    display: table-cell;
+    vertical-align: middle;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
-.brightness-control .name {
-    /* text-align: left; */
-    font-weight: bolder;
-    font-size: larger;
+.light-switch-container .icon {
+    padding-left: 10px;
     text-align: left;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.brightness-control input {
-    width: 40px;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.brightness-control button {
-    margin-left: 5px;
-    padding: 8px 16px;
-    font-size: larger;
-    cursor: pointer;
 }
 
 .fa {
@@ -82,7 +73,7 @@
     background-color: #f9f9f9;
 }
 
-.sensor-row {
+.sensor-row, .sensor-row-inner {
     margin-top: 20px;
     margin-bottom: 20px;
     display: table;
@@ -92,31 +83,58 @@
     border-radius: 6px;
 }
 
+.sensor-row-inner {
+    width: 97%;
+}
+
 .sensor-row .icon,
 .sensor-row .name,
-.sensor-row .value {
+.sensor-row .value,
+.sensor-row-inner .icon,
+.sensor-row-inner .name,
+.sensor-row-inner .value {
     display: table-cell;
     vertical-align: middle;
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
-.sensor-row .icon {
+.sensor-row .icon,
+.sensor-row-inner .icon {
     padding-left: 10px;
     text-align: left;
 }
 
-.sensor-row .name {
+.sensor-row .name,
+.sensor-row-inner .name {
     text-align: left;
     font-weight: bolder;
     font-size: larger;
 }
 
-.sensor-row .value {
+.sensor-row .spacing,
+.sensor-row-inner .spacing {
+    padding-left: 10px;
+}
+
+.sensor-row .value,
+.sensor-row-inner .value {
     text-align: right;
     padding-right: 10px;
     font-weight: bold;
     font-size: larger;
+}
+
+.sensor-row-inner .value .brightness {
+    /* font-size: large; */
+    font-weight: bold;
+    max-width: 30%; 
+}
+
+.sensor-row-inner .button {
+    /* font-size: large; */
+    width: 20%;
+    font-weight: bold;
 }
 
 .sensor-row i {
