@@ -153,7 +153,7 @@ function createDeviceControlWrapper(id, initialState, labelText, controlInitial,
             control.setValue(updatedValue);
           }
         });
-      }, 500);
+      }, 1000);
     }
 
     onToggle(newState);
