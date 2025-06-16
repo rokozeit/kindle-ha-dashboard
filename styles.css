@@ -116,9 +116,7 @@ body {
     box-sizing: border-box;
     border-radius: 8px;
     overflow: hidden;
-    /* schließt gefloatete Kinder ein */
     font-size: 0;
-    /* optional gegen Lücken bei inline-block */
 }
 
 .device-control-left,
@@ -128,7 +126,6 @@ body {
     box-sizing: border-box;
     padding: 0 10px;
     font-size: initial;
-    /* setzt Textgröße zurück */
 }
 
 
@@ -237,11 +234,6 @@ body {
     vertical-align: middle;
     font-size: xx-large;
 }
-
-
-/* .device-status-label {
-    vertical-align: middle;
-} */
 
 .device-status-label {
     display: inline-block;

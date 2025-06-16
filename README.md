@@ -245,3 +245,5 @@ Feel free to configure these tabs and cards as you wish.
 
 # Final words
 > Use this project on your own risk. Do not expose secrets. Have fun.
+
+> I cannot really provide support. ChatGPT is a good source for answers. An easy was is to feed the source code into it and ask questions.

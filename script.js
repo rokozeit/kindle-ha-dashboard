@@ -30,7 +30,6 @@ function createDeviceControls(id, initialValue, step, min, max, unit, onChange, 
   }
 
   minusBtn.onclick = function () {
-    if (disabled) return; 
     if (value > min) {
       value = Math.max(min, value - step);
       updateDisplay();
@@ -38,7 +37,6 @@ function createDeviceControls(id, initialValue, step, min, max, unit, onChange, 
   };
 
   plusBtn.onclick = function () {
-    if (disabled) return;
     if (value < max) {
       value = Math.min(max, value + step);
       updateDisplay();
@@ -52,11 +50,10 @@ function createDeviceControls(id, initialValue, step, min, max, unit, onChange, 
   minusBtn.disabled = disabled;
   plusBtn.disabled = disabled;
 
-  if (disabled) {
-    display.style.color = 'gray';
-  } else {
-    display.style.color = 'black';
-  }
+  wrapper.setValue = function (newValue) {
+    value = Number(newValue) || 0;
+    updateDisplay();
+  };
 
   return wrapper;
 }
@@ -126,6 +123,7 @@ function createDeviceControlWrapper(id, initialState, labelText, controlInitial,
 
   var toggleButton = createDeviceSwitch(id + '_toggle', initialState, function (newState) {
     controlDisabled = (newState !== 'on');
+
     control.setControlsDisabled(controlDisabled);
 
     var service = (newState === 'on') ? 'turn_on' : 'turn_off';
@@ -151,9 +149,11 @@ function createDeviceControlWrapper(id, initialState, labelText, controlInitial,
             if (displays.length > 0) {
               displays[0].innerHTML = updatedValue + (unit || '');
             }
+
+            control.setValue(updatedValue);
           }
         });
-      }, 800);
+      }, 500);
     }
 
     onToggle(newState);
@@ -273,7 +273,7 @@ function callHomeAssistantAPI(entityId, callback) {
         callback(e);
       }
     } else if (xhr.readyState === 4) {
-      callback(new Error("HTTP Fehler: " + xhr.status));
+      callback(new Error("HTTP error: " + xhr.status));
     }
   };
 
@@ -296,7 +296,7 @@ function callHomeAssistantService(domain, service, data) {
           console.log("Service call OK:", domain + "/" + service);
         } else {
           console.error("Service call failed:", xhr.status, xhr.responseText);
-          alert("Fehler beim Schalten: " + xhr.status);
+          alert("Error when switching: " + xhr.status);
         }
       }
     };
@@ -304,8 +304,7 @@ function callHomeAssistantService(domain, service, data) {
     var json = JSON.stringify(data || {});
     xhr.send(json);
   } catch (e) {
-    alert("Fehler beim Service-Call: " + e.message);
-    console.error("Exception beim Service-Call:", e);
+    console.error("Exception during service call to home assistant:", e);
   }
 }
 
@@ -317,7 +316,7 @@ function renderTabs(config) {
   tabContent.innerHTML = '';
 
   for (var i = 0; i < config.tabs.length; i++) {
-    (function(index) {
+    (function (index) {
       var tab = config.tabs[index];
       var tabElement = document.createElement('li');
       tabElement.textContent = tab.title;
@@ -347,7 +346,7 @@ function renderCards(cards) {
   tabContent.innerHTML = '';
 
   for (var i = 0; i < cards.length; i++) {
-    (function(card) {
+    (function (card) {
       var cardDiv = document.createElement('div');
       cardDiv.className = 'card';
 
@@ -361,10 +360,11 @@ function renderCards(cards) {
       cardDiv.appendChild(body);
 
       for (var j = 0; j < card.items.length; j++) {
-        (function(item) {
-          callHomeAssistantAPI(item.entity_id, function(err, data) {
+        (function (item) {
+          callHomeAssistantAPI(item.entity_id, function (err, data) {
             if (err) {
-              body.appendChild(document.createTextNode('Fehler bei ' + item.name));
+              body.appendChild(document.createTextNode('Error at ' + item.name));
+              console.error('Error when calling ', item.entity_id, ':', err);
               return;
             }
 
@@ -398,13 +398,13 @@ function renderCards(cards) {
                 item.name,
                 controlInitial,
                 item.unit,
-                function(newState) {
+                function (newState) {
                   var service = (newState === 'on') ? 'turn_on' : 'turn_off';
                   callHomeAssistantService('light', service, {
                     entity_id: item.entity_id
                   });
                 },
-                function(value) {
+                function (value) {
                   if (item.entity_id.indexOf('light.') === 0) {
                     callHomeAssistantService('light', 'turn_on', {
                       entity_id: item.entity_id,
@@ -452,9 +452,14 @@ function loadSecrets(callback) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'secrets.json', true);
   xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      secrets = JSON.parse(xhr.responseText);
-      callback();
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        secrets = JSON.parse(xhr.responseText);
+        callback();
+      } else {
+        console.error('Error loading secrets.json:', xhr.status, xhr.statusText);
+        alert('Error loading secrets.json. Please chec.');
+      }
     }
   };
   xhr.send();
@@ -464,9 +469,14 @@ function loadConfig(callback) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'config.json', true);
   xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      config = JSON.parse(xhr.responseText);
-      callback();
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        config = JSON.parse(xhr.responseText);
+        callback();
+      } else {
+        console.error('Error loading config.json:', xhr.status, xhr.statusText);
+        alert('Error loading config.json. Please check the configuration.');
+      }
     }
   };
   xhr.send();
