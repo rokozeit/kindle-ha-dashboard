@@ -18,7 +18,7 @@ Most similar projects only display **static screenshots** of the dashboard. Whil
 
 This project aims to:
 
-- Render simplified, Kindle-compatible dashboards
+- Render simplified, old Kindle-compatible dashboards
 - Provide minimal interactivity (e.g., toggling lights, showing live data)
 - Run on old Kindle e.g. Paperwhite (7th Gen) in **experimental browser mode**
 
@@ -66,93 +66,174 @@ You must provide the URL to your Home Assistant instance and a **Long-Lived Acce
 ```
 
 ### The Dash Board Config: `config.json`
-The `config.json` file defines the **structure and content** of your dashboard. You can organize your smart home devices into logical sections (called "cards"), and each card contains one or more **entities** (lights, sensors, etc.). You are free on how to do so. However, as stated before, I am not a pro and it might mess up the layout. It is all experimental.
+The `config.json` file defines the **structure and content** of your dashboard. You can organize your smart home devices into high level logical sections - tabs and into lower level logical sections - cards, and each card contains one or more **entities** (lights, sensors, etc.). You are free on how to do so.
+
+Tabs can be used e.g. to organize different rooms.
+
+Cards can be used e.g. to organize different device types within the tabs dashboard.
 
 #### Example `config.json` - snippet with card
 Each card has a `name` displayed to the user in the card header and a list of `entities`. I only tested a view. You might mess up the layout here easily.
 
 ```json
 {
-  "cards": [
+  "tabs": [
     {
-      "name": "My Card Name",
-      "entities": []
-    }
-  ]
+      "id": "some tab id",
+      "title": "Some Title",
+      "cards": [
+        {
+          "id": "some card id",
+          "title": "Some Card Title",
+          "items": []
+        }
+      ]
+    }]
 }
 ```
 
 #### Entities
 The current configuration supports the following Home Assistant entity types:
 
-- **Lights**  
+- **Controls**
+  Controlls can currently control light (currently no color control) and radiator termostates
   - Toggle on/off  
-  - Adjust brightness (if supported by the light entity)
-
-- **Switches**  
-  - Simple on/off control
+  - Adjust value (brightness in %, temperature in °C)
 
 - **Sensors**  
   - Read-only values such as:
     - Temperature
     - Humidity
-    - Any other sensor entity supported by Home Assistant
+    - Any other sensor entity supported by Home Assistant (not tested)
+
+- **Statur**  
+  - Read-only values for binary sensors (e.g. door / window sensors)
 
 
-For each entity you provide a human readable `name` (displayed in the dashboard), the `type` (`sensor`, `light` or `switch`), the home assistant `entity_id` of the device and a icon name from [font awsome](https://fontawesome.com/search?ic=free) to be displayed in front of the entity (only free once).
+For each entity you provide:
 
-| Key         | Description                                                |
-| -- |   |
-| `entity_id` | The entity id of your device at home assistant. It usually starts with e.g. `sensor`, `light` or `switch`. See examples below. You will find them within home assistant. |
-| `name`      | The display name shown to the user for this entity.  |
-| `type`      | Type of entity. Currently supported are `sensor`, `light` or `switch`. |
-| `icon`      | Icon name from [Font Awesome]https://fontawesome.com/search?ic=free (`fa-*`), e.g.: `fa-lightbulb`. You can skip this and use some defautl set icons.  |
+  - **type**: one of `sensor` (e.g. temperature or humidity), `status` (binary sensor) or `control` (e.g. lights or radiator termostats)
+  - **name**: a human readable name displayed in the dashboard
+  - **entity_id**: the home assistant entity id of the device.
 
-#### Putting it all together
+For `sensor` you provide one and for `device` and `status` you provide two icons from [font awsome](https://fontawesome.com/search?ic=free).
 
-Also see `./config_sample.json`
+For `control` and `sensor` you also provide a unit. For light it is usually `'%'`, for temperature it is `'°C'`. No other configs are currently supported. 
 
-I configured two cards for living room and kitchen in the dashboard. Both include a `temperature` and a `humidity` sensor. The living room also includes a `light`.
+
+## Putting it all together
+
+I configured two tabs (`Living Room` and `Kitchen`). The `Living Room` contains two cards and the `Kitchen` one card. Both tabs contain a `Climate` card with `temperature` and `humidity` sensor. The `Living Room` also includes a card with a `control` for a light as well as one for a binary sensor for doors and windows.
+
+The following example contains comments starting with `//`. This is not officially supported in json. So remove them or use the `./config_sample.json`
 
 ```json
 {
-  "cards": [
+  // two tabs are defined
+  "tabs": [
     {
-      "name": "Living Room",
-      "entities": [
+      // first tab
+      "id": "livingroom",
+      "title": "Living Room",
+      "cards": [
         {
-          "entity_id": "light.osram_light",
-          "name": "Small Light",
-          "type": "light"
+          // first card in first tab
+          "id": "card1",
+          "title": "Climate",
+          "items": [
+            {
+              // a sensor displaying the temperature
+              "type": "sensor",
+              // entity id of the sensor within home assistent
+              "entity_id": "sensor.sonoff_snzb_02d_temperature",
+              // the css class for the font awesome icon 
+              "iconClass": "fas fa-thermometer-half",
+              // the display name
+              "name": "Temperature",
+              // the displayed unit
+              "unit": "°C"
+            },
+            {
+              // a sensor displaying the humidity
+              "type": "sensor",
+              "entity_id": "sensor.sonoff_snzb_02d_humidity",
+              "iconClass": "fas fa-tint",
+              "name": "Humidity",
+              "unit": "%"
+            }
+          ]
         },
         {
-          "entity_id": "sensor.sonoff_snzb_02d_temperatur",
-          "name": "Temperatur",
-          "type": "sensor",
-          "icon": "fa-thermometer-half"
+          // second card in first tab
+          "id": "card2",
+          "title": "Small Light",
+          "items": [
+            {
+              // a control for a ligth to turn it on and off and adjust brightness
+              "type": "control",
+              // entity id of the sensor within home assistent
+              "entity_id": "light.osram_light",
+              // the display name
+              "name": "Light",
+              // the displayed unit - for lights this is %, for termostates it is °C
+              "unit": "%",
+              // the css classes for on and off state (font awesome)
+              "iconClasses": {
+                "on": "fas fa-lightbulb",
+                "off": "far fa-lightbulb"
+              }
+            }
+          ]
         },
         {
-          "entity_id": "sensor.sonoff_snzb_02d_luftfeuchtigkeit",
-          "name": "Humidity",
-          "type": "sensor",
-          "icon": "fa-tint"
+          // third card in first tab
+          "id": "card3",
+          "title": "Doors & Windows",
+          "items": [
+            {
+              // a binary sensor displaying the status of the sensor
+              "type": "status",
+              // entity id of the sensor within home assistent
+              "entity_id": "binary_sensor.lumi_lumi_sensor_magnet_aq2_offnung",
+              // the display name
+              "name": "Door Entrance",
+              // the css classes for on and off state (font awesome)
+              "iconClasses": {
+                "on": "fas fa-door-open",
+                "off": "fas fa-door-closed"
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Kitchen",
-      "entities": [
+      // second tab
+      "id": "kitchen",
+      "title": "Kitchen",
+      "cards": [
         {
-          "entity_id": "sensor.tze204_s139roas_ts0601_temperatur",
-          "name": "Temperatur",
-          "type": "sensor",
-          "icon": "fa-thermometer-half"
-        },
-        {
-          "entity_id": "sensor.tze204_s139roas_ts0601_luftfeuchtigkeit",
-          "name": "Luftfeuchtigkeit",
-          "type": "sensor",
-          "icon": "fa-tint"
+          // first (and here only) card in the second tab
+          "id": "card1",
+          "title": "Climate",
+          "items": [
+            {
+              // a sensor displaying the temperature
+              "type": "sensor",
+              "entity_id": "sensor.tze204_s139roas_ts0601_temperaturw",
+              "iconClass": "fas fa-thermometer-half",
+              "name": "Temperaturw",
+              "unit": "°C"
+            },
+            {
+              // a sensor displaying the humidity              
+              "type": "sensor",
+              "entity_id": "sensor.tze204_s139roas_ts0601_humidity",
+              "iconClass": "fas fa-tint",
+              "name": "Humidity",
+              "unit": "%"
+            }
+          ]
         }
       ]
     }
@@ -160,7 +241,7 @@ I configured two cards for living room and kitchen in the dashboard. Both includ
 }
 ```
 
-Feel free to configure these cards as you wish. You can e.g. group similar sensors like temperature in one card and switches in another. But be aware of the bad coding. You might find some features I did not intend. ;-)
+Feel free to configure these tabs and cards as you wish.
 
 # Final words
 > Use this project on your own risk. Do not expose secrets. Have fun.

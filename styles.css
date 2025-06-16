@@ -1,161 +1,288 @@
-.card {
-border: 1px solid #ccc;
-    border-radius: 6px;
-    margin: 10px auto;
-    padding: 10px;
-    width: 90%;
+body {
     font-family: sans-serif;
-    clear: both;
 }
 
-.card h3 {
+#tab-list {
+    list-style: none;
+    padding: 0;
     margin: 0;
-    padding: 10px;
-    background-color: #444;
+    white-space: nowrap;
+    font-size: large;
+}
+
+#tab-list li {
+    display: inline-block;
+    margin-right: 5px;
+    padding: 10px 15px;
+    border: 1px solid black;
+    border-radius: 8px 8px 0 0;
+    background-color: white;
+}
+
+#tab-list li.active {
+    background-color: black;
+    border-bottom: 1px solid white;
     color: white;
 }
 
-.btn {
-    padding: 5px 10px;
-    margin: 5px;
-    cursor: pointer;
-    font-size: larger;
+
+#tab-content {
+    border: 2px solid black;
+    border-radius: 0 8px 8px 8px;
+    padding: 10px;
+    background-color: white;
+    min-height: 200px;
 }
 
-.btn.on {
+#dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* controls the device - e.g. light brigtness or radiator thermostat */
+.controls-wrapper {
+    display: inline-block;
+    border: 2px solid black;
+    border-radius: 8px;
+    font-family: sans-serif;
+    margin: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.controls-button,
+.controls-display {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: x-large;
+    min-width: 100px;
+    width: 100px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+
+.controls-button {
+    border: 1px solid black;
+    border-radius: 8px;
     background-color: black;
     color: white;
 }
 
-.btn.off {
-    background-color: gray;
-    color: white;
+.controls-button:disabled {
+    background-color: lightgray;
+    color: darkgray;
 }
 
-.light-switch-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    display: table;
-    width: 100%;
-    padding: 4px 0;
-    border: 1px solid darkgray;
-    border-radius: 6px;
+.controls-display {
+    background-color: white;
+    min-width: 60px;
+    text-align: center;
 }
 
-.light-switch-container .icon,
-.light-switch-container .inner-part {
-    display: table-cell;
+/* on / off for devices */
+.device-switch {
+    display: inline-block;
+    width: 68px;
+    height: 68px;
+    border: 2px solid grey;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 68px;
+    font-size: x-large;
+    color: grey;
+    background-color: white;
+    margin: 10px;
+    margin-right: 20px;
     vertical-align: middle;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 
-.light-switch-container .icon {
-    padding-left: 10px;
-    text-align: left;
+.device-switch.on {
+    color: black;
+    background-color: white;
+    border: 2px solid black;
 }
 
-.fa {
-    margin-right: 8px;
+.device-switch i {
+    line-height: inherit;
+    vertical-align: middle;
 }
 
-.card-header {
-    background-color: #444;
-    color: white;
+.device-control-wrapper {
+    width: 100%;
+    border: 2px solid black;
     padding: 10px;
-    border-bottom: 1px solid #333;
+    box-sizing: border-box;
+    border-radius: 8px;
+    overflow: hidden;
+    /* schließt gefloatete Kinder ein */
+    font-size: 0;
+    /* optional gegen Lücken bei inline-block */
+}
+
+.device-control-left,
+.device-control-right {
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    font-size: initial;
+    /* setzt Textgröße zurück */
+}
+
+
+.device-control-left {
+    text-align: left;
+    padding-right: 10px;
+}
+
+.device-control-right {
+    text-align: right;
+    padding-left: 10px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+
+.device-control-text {
+    display: inline-block;
+    font-size: x-large;
+    margin: 0 10px;
+    vertical-align: middle;
+}
+
+/* display for sensor data like temperature or humidity */
+.sensor-display-wrapper {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+.sensor-cell {
+    float: left;
+    height: 78px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    line-height: 2;
+}
+
+.sensor-cell.left-cell {
+    width: 50%;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.sensor-cell.right-cell {
+    width: 50%;
+    text-align: right;
     font-weight: bold;
 }
 
-.card-body {
-    padding: 10px;
-    background-color: #f9f9f9;
-}
-
-.sensor-row,
-.sensor-row-inner {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    display: table;
-    width: 100%;
-    padding: 4px 0;
-    border: 1px solid darkgray;
-    border-radius: 6px;
-}
-
-.sensor-row-inner {
-    width: 97%;
-}
-
-.sensor-row .icon,
-.sensor-row .name,
-.sensor-row .value,
-.sensor-row-inner .icon,
-.sensor-row-inner .name,
-.sensor-row-inner .value {
-    display: table-cell;
+/* icon und label inline-block mit vertikaler Mitte */
+.sensor-icon-wrapper,
+.sensor-label {
+    display: inline-block;
     vertical-align: middle;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    margin-right: 30px;
 }
 
-.sensor-row .icon,
-.sensor-row-inner .icon {
-    padding-left: 10px;
-    text-align: left;
+.sensor-icon-wrapper {
+    width: 58px;
+    height: 58px;
+    background-color: white;
+    text-align: center;
+    line-height: 58px;
 }
 
-.sensor-row .name,
-.sensor-row-inner .name {
-    text-align: left;
-    font-weight: bolder;
+.sensor-icon-wrapper i {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    font-size: xx-large;
+}
+
+.sensor-label {
+    display: inline-block;
+    font-size: x-large;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.sensor-value {
+    display: inline-block;
+    font-size: x-large;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+/* status display for e.g. door and window sensors */
+.device-status-wrapper {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: sans-serif;
+    font-size: x-large;
+    background-color: white;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.device-status-icon {
+    margin-right: 30px;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-size: xx-large;
+}
+
+
+/* .device-status-label {
+    vertical-align: middle;
+} */
+
+.device-status-label {
+    display: inline-block;
+    vertical-align: middle;
     font-size: x-large;
 }
 
-.sensor-row .spacing,
-.sensor-row-inner .spacing {
-    padding-left: 10px;
-}
 
-.sensor-row .value,
-.sensor-row-inner .value {
-    text-align: right;
-    padding-right: 10px;
-    font-weight: bold;
-    font-size: larger;
-}
+/* aggregating different sensors and switches and so on */
 
-/* Anpassung hier: feste Breite für das Helligkeit-Input-Feld */
-.sensor-row-inner .value .brightness {
-    /* width: 60px; */
-    box-sizing: border-box;
-    font-weight: bold;
-    margin-right: 5px;
-}
-
-/* Buttons daneben nicht zu breit */
-.sensor-row-inner .value .button {
-    /* width: 30px; */
-    font-weight: bold;
-    padding: 4px 0;
-    margin-left: 2px;
-    margin-right: 2px;
-}
-
-.sensor-row-inner .button {
-    background-color: black;
-    color: white;
-    width: 60px;
-}
-
-.sensor-row-inner input {
-    max-width: 20%;
-}
-
-/* Icon-Breite bei Sensoren */
-.sensor-row i {
-    margin-right: 8px;
-    width: 16px;
-    text-align: center;
+.card {
+    border: 2px solid black;
+    border-radius: 8px;
+    margin: 20px;
+    padding: 5px;
+    font-family: sans-serif;
+    background-color: white;
     display: inline-block;
+    vertical-align: top;
+    width: 94%;
+}
+
+.card-header {
+    background-color: white;
+    padding: 10px 16px;
+    font-size: x-large;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+}
+
+.card-body {
+    padding: 16px;
+    gap: 10px;
+}
+
+.card-body>* {
+    display: block;
+    margin: 0 auto 10px;
+    box-sizing: border-box;
+}
+
+.card-body>*:last-child {
+    margin-bottom: 0;
 }

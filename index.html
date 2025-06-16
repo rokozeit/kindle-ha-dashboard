@@ -3,14 +3,21 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Home Assistant Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
 <body>
-    <div id="container"></div>
+    <div id="tabs">
+        <ul id="tab-list"></ul>
+        <div id="tab-content"></div>
+    </div>
+    <div id="dashboard"></div>
     <script src="script.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/es5-shim/es5-shim.min.js"></script> -->
+
 </body>
 
 </html>
