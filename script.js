@@ -43,8 +43,8 @@ function createDeviceControls(id, initialValue, step, min, max, unit, onChange, 
     }
   };
 
-  wrapper.appendChild(display);
   wrapper.appendChild(minusBtn);
+  wrapper.appendChild(display);
   wrapper.appendChild(plusBtn);
 
   minusBtn.disabled = disabled;
@@ -89,6 +89,32 @@ function createDeviceSwitch(id, initialState, onToggle, iconClasses) {
   };
 
   return btn;
+}
+
+function createSimpleSwitch(id, initialState, labelText, onToggle, iconClasses) {
+  var wrapper = document.createElement('div');
+  wrapper.className = 'device-control-wrapper';
+  wrapper.id = id;
+
+  var leftCell = document.createElement('div');
+  leftCell.className = 'device-control-left';
+
+  var toggleButton = createDeviceSwitch(id + '_toggle', initialState, function (newState) {
+    var service = (newState === 'on') ? 'turn_on' : 'turn_off';
+    callHomeAssistantService('switch', service, { entity_id: id });
+    onToggle(newState);
+  }, iconClasses);
+
+  leftCell.appendChild(toggleButton);
+
+  var label = document.createElement('span');
+  label.className = 'device-control-text';
+  label.innerHTML = labelText;
+  leftCell.appendChild(label);
+
+  wrapper.appendChild(leftCell);
+
+  return wrapper;
 }
 
 function createDeviceControlWrapper(id, initialState, labelText, controlInitial, unit, onToggle, onControlChange, iconClasses) {
@@ -359,27 +385,31 @@ function renderCards(cards) {
       body.className = 'card-body';
       cardDiv.appendChild(body);
 
-      for (var j = 0; j < card.items.length; j++) {
-        (function (item) {
-          callHomeAssistantAPI(item.entity_id, function (err, data) {
-            if (err) {
-              body.appendChild(document.createTextNode('Error at ' + item.name));
-              console.error('Error when calling ', item.entity_id, ':', err);
-              return;
-            }
+      // Funktion zum sequenziellen Laden der Items in korrekter Reihenfolge
+      function loadNextItem(index) {
+        if (index >= card.items.length) {
+          return; // alle fertig
+        }
+
+        var item = card.items[index];
+
+        callHomeAssistantAPI(item.entity_id, function (err, data) {
+          if (err) {
+            body.appendChild(document.createTextNode('Error at ' + item.name));
+            console.error('Error when calling ', item.entity_id, ':', err);
+          } else {
+            var element = null;
 
             if (item.type === 'sensor') {
-              var sensorElem = createSensorDisplay({
+              element = createSensorDisplay({
                 id: item.entity_id,
                 iconClass: item.iconClass,
                 labelText: item.name,
                 value: data.state,
                 unit: item.unit
               });
-              body.appendChild(sensorElem);
             } else if (item.type === 'control') {
               var controlInitial = item.controlInitial;
-
               if (data.attributes) {
                 if (typeof data.attributes.brightness !== 'undefined') {
                   controlInitial = Math.round((data.attributes.brightness / 255) * 100);
@@ -392,7 +422,7 @@ function renderCards(cards) {
                 controlInitial = parseFloat(data.state);
               }
 
-              var controlElem = createDeviceControlWrapper(
+              element = createDeviceControlWrapper(
                 item.entity_id,
                 data.state,
                 item.name,
@@ -400,9 +430,7 @@ function renderCards(cards) {
                 item.unit,
                 function (newState) {
                   var service = (newState === 'on') ? 'turn_on' : 'turn_off';
-                  callHomeAssistantService('light', service, {
-                    entity_id: item.entity_id
-                  });
+                  callHomeAssistantService('light', service, { entity_id: item.entity_id });
                 },
                 function (value) {
                   if (item.entity_id.indexOf('light.') === 0) {
@@ -419,24 +447,42 @@ function renderCards(cards) {
                 },
                 item.iconClasses
               );
-              body.appendChild(controlElem);
             } else if (item.type === 'status') {
-              var statusElem = createDeviceStatus({
+              element = createDeviceStatus({
                 id: item.entity_id,
                 labelText: item.name,
                 state: data.state,
                 iconClasses: item.iconClasses
               });
-              body.appendChild(statusElem);
+            } else if (item.type === 'simple_switch' || item.type === 'switch') {
+              // jetzt beide Typen gemeinsam behandeln
+              element = createSimpleSwitch(
+                item.entity_id,
+                data.state,
+                item.name,
+                function (newState) {
+                  var service = (newState === 'on') ? 'turn_on' : 'turn_off';
+                  callHomeAssistantService('switch', service, { entity_id: item.entity_id });
+                },
+                item.iconClasses
+              );
             }
-          });
-        })(card.items[j]);
+
+            if (element) body.appendChild(element);
+          }
+
+          // Nach dem aktuellen Item das nächste starten
+          loadNextItem(index + 1);
+        });
       }
+
+      loadNextItem(0); // starte mit erstem Item
 
       tabContent.appendChild(cardDiv);
     })(cards[i]);
   }
 }
+
 
 
 function loadStates() {
