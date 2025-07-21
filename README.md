@@ -96,7 +96,7 @@ Each card has a `name` displayed to the user in the card header and a list of `e
 The current configuration supports the following Home Assistant entity types:
 
 - **Controls**
-  Controlls can currently control light (currently no color control) and radiator termostates
+  Controlls can currently control light (currently no color control)
   - Toggle on/off  
   - Adjust value (brightness in %, temperature in °C)
 
@@ -106,13 +106,13 @@ The current configuration supports the following Home Assistant entity types:
     - Humidity
     - Any other sensor entity supported by Home Assistant (not tested)
 
-- **Statur**  
+- **Status**  
   - Read-only values for binary sensors (e.g. door / window sensors)
 
 
 For each entity you provide:
 
-  - **type**: one of `sensor` (e.g. temperature or humidity), `status` (binary sensor) or `control` (e.g. lights or radiator termostats)
+  - **type**: one of `sensor` (e.g. temperature or humidity), `status` (binary sensor) or `control` (e.g. lights)
   - **name**: a human readable name displayed in the dashboard
   - **entity_id**: the home assistant entity id of the device.
 
