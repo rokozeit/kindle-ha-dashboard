@@ -348,7 +348,8 @@ function renderTabs(config) {
       tabElement.textContent = tab.title;
       tabElement.setAttribute('data-index', index);
 
-      if (index === 0) {
+      var lastIndex = parseInt(localStorage.getItem('activeTab'), 10);
+      if (index === (isNaN(lastIndex) ? 0 : lastIndex)) {
         tabElement.className = 'active';
         renderCards(tab.cards);
       }
@@ -359,6 +360,7 @@ function renderTabs(config) {
           allTabs[j].className = '';
         }
         tabElement.className = 'active';
+        localStorage.setItem('activeTab', index); // <-- hier speichern!
         renderCards(tab.cards);
       });
 
